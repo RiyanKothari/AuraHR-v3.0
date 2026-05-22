@@ -9,7 +9,7 @@ export const neev = new OpenAI({
   baseURL: process.env.NEEV_BASE_URL || 'https://inference.ai.neevcloud.com/v1',
 });
 
-export const MODEL = 'gpt-oss-120b';
+export const MODEL = 'gpt-oss-20b';
 
 /**
  * High-fidelity Mock Generator for common recruitment roles

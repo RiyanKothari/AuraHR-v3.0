@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aurahr_scheduler/db" VERSION="2026052200"
+       COMMENT="AuraHR Smart Scheduler tables"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+
+    <TABLE NAME="local_aurahr_availability" COMMENT="User availability slots">
+      <FIELDS>
+        <FIELD NAME="id"         TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid"     TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="day_of_week" TYPE="int" LENGTH="1"  NOTNULL="true"
+               COMMENT="0=Sunday through 6=Saturday"/>
+        <FIELD NAME="start_time" TYPE="char" LENGTH="5"  NOTNULL="true" COMMENT="HH:MM format"/>
+        <FIELD NAME="end_time"   TYPE="char" LENGTH="5"  NOTNULL="true" COMMENT="HH:MM format"/>
+        <FIELD NAME="recurring"  TYPE="int"  LENGTH="1"  NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="specific_date" TYPE="int" LENGTH="10" NOTNULL="false"
+               COMMENT="Unix timestamp for one-off availability"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"   TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="local_aurahr_blocked_times" COMMENT="Blocked time periods">
+      <FIELDS>
+        <FIELD NAME="id"         TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid"     TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="start_time" TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="end_time"   TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="reason"     TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"   TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="local_aurahr_sched_rules" COMMENT="Scheduling rules and preferences">
+      <FIELDS>
+        <FIELD NAME="id"                TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="jobid"             TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="min_gap_mins"      TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="15"
+               COMMENT="Minimum gap between interviews"/>
+        <FIELD NAME="max_per_day"       TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="8"/>
+        <FIELD NAME="preferred_duration" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="30"/>
+        <FIELD NAME="buffer_days"       TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="1"
+               COMMENT="Minimum days ahead to schedule"/>
+        <FIELD NAME="timecreated"       TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"  TYPE="primary" FIELDS="id"/>
+        <KEY NAME="jobid_fk" TYPE="foreign" FIELDS="jobid" REFTABLE="local_aurahr_jobs" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="local_aurahr_reschedule" COMMENT="Reschedule requests">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="interviewid"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="requestedby"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="reason"       TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="new_time"     TYPE="int"  LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="status"       TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending"
+               COMMENT="pending | approved | rejected"/>
+        <FIELD NAME="timecreated"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"        TYPE="primary" FIELDS="id"/>
+        <KEY NAME="interviewid_fk" TYPE="foreign" FIELDS="interviewid" REFTABLE="local_aurahr_interviews" REFFIELDS="id"/>
+        <KEY NAME="requestedby_fk" TYPE="foreign" FIELDS="requestedby" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>

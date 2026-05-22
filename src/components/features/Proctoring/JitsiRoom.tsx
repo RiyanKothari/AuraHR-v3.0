@@ -24,7 +24,8 @@ export default function JitsiRoom({ roomName, userName }: JitsiRoomProps) {
           DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
         }}
         userInfo={{
-          displayName: userName,
+          displayName: "Interview Room",
+          email: "room@aurahr.local"
         }}
         onApiReady={(externalApi: any) => {
           // Here you can add custom listeners for proctoring signals

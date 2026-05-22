@@ -8,7 +8,7 @@ export type TaxRegime = 'old' | 'new';
 export type Employee = {
   id: string; name: string; email: string; role: string; location: string;
   salary: number; avatarUrl?: string; pan?: string; aadhar?: string;
-  uan?: string; taxRegime?: TaxRegime; state?: string;
+  uan?: string; taxRegime?: TaxRegime; state?: string; skills?: string[];
 };
 
 export type Activity = { id: string; employeeId: string; action: string; status: 'Done' | 'Pending' | 'Alert'; time: string };

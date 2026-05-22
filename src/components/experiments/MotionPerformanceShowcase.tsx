@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { animate, timeline } from "motion";
+import { animate } from "motion";
 import { Sparkles, Activity, Cpu, Zap, RotateCcw, AlertTriangle, Play, Pause } from "lucide-react";
 import clsx from "clsx";
 
@@ -52,18 +52,18 @@ export default function MotionPerformanceShowcase() {
       if (animationEngine === "waapi") {
         const control = animate(
           particle,
-          {
+          ({
             x: [0, (Math.random() - 0.5) * 200, (Math.random() - 0.5) * 200, 0],
             y: [0, (Math.random() - 0.5) * 150, (Math.random() - 0.5) * 150, 0],
             scale: [1, Math.random() * 1.5 + 0.5, Math.random() * 1.5 + 0.5, 1],
             opacity: [0.3, 0.9, 0.5, 0.3],
-          },
-          {
+          } as any),
+          ({
             duration: Math.random() * 6 + 4,
             repeat: Infinity,
             direction: "alternate",
             easing: "ease-in-out",
-          }
+          } as any)
         );
         controls.push(control);
       } else {
@@ -102,11 +102,11 @@ export default function MotionPerformanceShowcase() {
     
     animate(
       springCardRef.current,
-      {
+      ({
         rotate: [0, -10, 10, -5, 5, 0],
         scale: [1, 1.08, 0.95, 1.02, 1],
         y: [0, -20, 5, -2, 0]
-      },
+      } as any),
       {
         type: "spring",
         stiffness: springConfig.stiffness,

@@ -30,4 +30,10 @@ body {
   .bento-card {
     @apply bg-cream rounded-[14px] border border-ink/12;
   }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-warm-sand/60 border border-ink/8 rounded-2xl text-ink
+           placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-gold/40
+           focus:border-gold/40 transition-all text-sm;
+  }
 }

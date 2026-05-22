@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aurahr_academia/db" VERSION="2026052200"
+       COMMENT="AuraHR Academia assessment tables"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+
+    <!-- Links a job to a Moodle quiz for the academia round -->
+    <TABLE NAME="local_aurahr_assessments" COMMENT="Academia round assessment configs">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="jobid"        TYPE="int"  LENGTH="10" NOTNULL="true"
+               COMMENT="FK to local_aurahr_jobs"/>
+        <FIELD NAME="quizid"       TYPE="int"  LENGTH="10" NOTNULL="false"
+               COMMENT="FK to mdl_quiz.id — the Moodle quiz created for this round"/>
+        <FIELD NAME="courseid"     TYPE="int"  LENGTH="10" NOTNULL="false"
+               COMMENT="FK to mdl_course.id — course containing the quiz"/>
+        <FIELD NAME="title"        TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="num_questions" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="20"/>
+        <FIELD NAME="duration_mins" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="60"/>
+        <FIELD NAME="pass_percentage" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="true" DEFAULT="60.00"/>
+        <FIELD NAME="start_time"   TYPE="int"  LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="end_time"     TYPE="int"  LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="status"       TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="draft"
+               COMMENT="draft | scheduled | active | completed"/>
+        <FIELD NAME="ai_topic"     TYPE="text" NOTNULL="false"
+               COMMENT="Topic/skills for AI question generation"/>
+        <FIELD NAME="questions"    TYPE="text" NOTNULL="false"
+               COMMENT="JSON encoded generated questions"/>
+        <FIELD NAME="timecreated"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"   TYPE="primary" FIELDS="id"/>
+        <KEY NAME="jobid_fk"  TYPE="foreign" FIELDS="jobid" REFTABLE="local_aurahr_jobs" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_jobid"  UNIQUE="false" FIELDS="jobid"/>
+        <INDEX NAME="ix_status" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Tracks which candidates are enrolled in which assessment -->
+    <TABLE NAME="local_aurahr_assess_enrol" COMMENT="Candidate assessment enrollment">
+      <FIELDS>
+        <FIELD NAME="id"            TYPE="int"    LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="assessmentid"  TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="userid"        TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="applicationid" TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="status"        TYPE="char"   LENGTH="20" NOTNULL="true" DEFAULT="pending"
+               COMMENT="pending | in_progress | completed | absent"/>
+        <FIELD NAME="score"         TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="passed"        TYPE="int"    LENGTH="1"  NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="started_at"    TYPE="int"    LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="completed_at"  TYPE="int"    LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="timecreated"   TYPE="int"    LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"         TYPE="primary" FIELDS="id"/>
+        <KEY NAME="assessmentid_fk" TYPE="foreign" FIELDS="assessmentid" REFTABLE="local_aurahr_assessments" REFFIELDS="id"/>
+        <KEY NAME="userid_fk"       TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="applicationid_fk" TYPE="foreign" FIELDS="applicationid" REFTABLE="local_aurahr_applications" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_assess_user" UNIQUE="true" FIELDS="assessmentid, userid"/>
+      </INDEXES>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>

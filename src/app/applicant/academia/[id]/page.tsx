@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from 'react';
+import { moodleCall } from '@/lib/moodle';
 import { 
   GraduationCap, FileText, CheckCircle, Clock, Zap, 
   ArrowRight, ShieldCheck, Trophy, Brain, Loader2,
@@ -70,20 +71,28 @@ export default function ApplicantAcademiaPage({ params }: { params: Promise<{ id
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const submissions = Object.entries(answers).map(([qid, ans]) => ({ questionId: qid, answer: ans }));
-      const res = await fetch('/api/recruitment/academia/score', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          candidateId: id, 
-          submissions,
-          proctoringSignals: proctoringEvents 
-        })
+      // Calculate a basic score on frontend
+      let totalScore = 0;
+      let count = 0;
+      questions.forEach(q => {
+        if (q.type === 'mcq') {
+          if (answers[q.id] === q.correctAnswer) totalScore += 10;
+          count += 10;
+        } else {
+          totalScore += 8; // default score for descriptive
+          count += 10;
+        }
       });
-      const data = await res.json();
-      if (data.success) {
-        setIsCompleted(true);
-      }
+      const finalScore = count > 0 ? (totalScore / count) * 100 : 0;
+
+      await moodleCall('local_aurahr_academia_submit_test', { 
+        candidateId: parseInt(id) || 1, 
+        jobId: 0, 
+        score: finalScore 
+      });
+      setIsCompleted(true);
+    } catch (e) {
+      console.error("Submission failed:", e);
     } finally {
       setIsSubmitting(false);
     }

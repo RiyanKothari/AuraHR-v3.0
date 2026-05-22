@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aurahr_interview/db" VERSION="2026052200"
+       COMMENT="AuraHR Interview management tables"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+
+    <TABLE NAME="local_aurahr_interviews" COMMENT="Scheduled interviews">
+      <FIELDS>
+        <FIELD NAME="id"             TYPE="int"    LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="applicationid"  TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="jobid"          TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="candidateid"    TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="interviewerid"  TYPE="int"    LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="scheduled_at"   TYPE="int"    LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="duration_mins"  TYPE="int"    LENGTH="10" NOTNULL="true" DEFAULT="30"/>
+        <FIELD NAME="jitsi_room"     TYPE="char"   LENGTH="255" NOTNULL="false"
+               COMMENT="Jitsi room name for video call"/>
+        <FIELD NAME="status"         TYPE="char"   LENGTH="20" NOTNULL="true" DEFAULT="scheduled"
+               COMMENT="scheduled | in_progress | completed | cancelled | no_show"/>
+        <FIELD NAME="interviewer_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="interviewer_notes" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="ai_score"       TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="ai_evaluation"  TYPE="text"   NOTNULL="false" COMMENT="AI evaluation JSON"/>
+        <FIELD NAME="transcript"     TYPE="text"   NOTNULL="false" COMMENT="Interview transcript"/>
+        <FIELD NAME="timecreated"    TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified"   TYPE="int"    LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"          TYPE="primary" FIELDS="id"/>
+        <KEY NAME="applicationid_fk" TYPE="foreign" FIELDS="applicationid" REFTABLE="local_aurahr_applications" REFFIELDS="id"/>
+        <KEY NAME="jobid_fk"         TYPE="foreign" FIELDS="jobid" REFTABLE="local_aurahr_jobs" REFFIELDS="id"/>
+        <KEY NAME="candidateid_fk"   TYPE="foreign" FIELDS="candidateid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_jobid"       UNIQUE="false" FIELDS="jobid"/>
+        <INDEX NAME="ix_candidateid" UNIQUE="false" FIELDS="candidateid"/>
+        <INDEX NAME="ix_status"      UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="ix_scheduled"   UNIQUE="false" FIELDS="scheduled_at"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="local_aurahr_interview_qs" COMMENT="Interview questions per interview">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="interviewid"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="question"     TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="category"     TYPE="char" LENGTH="50" NOTNULL="false"
+               COMMENT="technical | behavioral | situational | cultural"/>
+        <FIELD NAME="answer"       TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="score"        TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="sortorder"    TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"        TYPE="primary" FIELDS="id"/>
+        <KEY NAME="interviewid_fk" TYPE="foreign" FIELDS="interviewid" REFTABLE="local_aurahr_interviews" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="local_aurahr_proctor_events" COMMENT="Proctoring events during assessments/interviews">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid"       TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="sessiontype"  TYPE="char" LENGTH="20" NOTNULL="true"
+               COMMENT="academia | interview"/>
+        <FIELD NAME="sessionid"    TYPE="int"  LENGTH="10" NOTNULL="true"
+               COMMENT="FK to assessment enrollment or interview"/>
+        <FIELD NAME="event_type"   TYPE="char" LENGTH="50" NOTNULL="true"
+               COMMENT="tab_switch | face_away | multiple_faces | no_face | audio_anomaly | screen_share_off | copy_paste"/>
+        <FIELD NAME="severity"     TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="warning"
+               COMMENT="info | warning | critical"/>
+        <FIELD NAME="details"      TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="screenshot"   TYPE="text" NOTNULL="false" COMMENT="Base64 screenshot if available"/>
+        <FIELD NAME="timecreated"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"   TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_session" UNIQUE="false" FIELDS="sessiontype, sessionid"/>
+        <INDEX NAME="ix_userid"  UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>

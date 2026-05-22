@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aurahr_jobs/db" VERSION="2026052200"
+       COMMENT="AuraHR Jobs and Applications tables"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+
+    <!-- ============================================================
+         TABLE: local_aurahr_jobs
+         Stores all job postings created by recruiters / managers.
+         ============================================================ -->
+    <TABLE NAME="local_aurahr_jobs" COMMENT="Job postings">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="title"        TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="description"  TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="department"   TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="vacancies"    TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="deadline"     TYPE="int"  LENGTH="10" NOTNULL="false"
+               COMMENT="Unix timestamp — application deadline"/>
+        <FIELD NAME="maxlimit"     TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="100"
+               COMMENT="Maximum number of applications accepted"/>
+        <FIELD NAME="status"       TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="active"
+               COMMENT="active | closed | archived"/>
+        <FIELD NAME="createdby"    TYPE="int"  LENGTH="10" NOTNULL="true"
+               COMMENT="FK to mdl_user.id — the recruiter who created this job"/>
+        <FIELD NAME="timecreated"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"     TYPE="primary"  FIELDS="id"/>
+        <KEY NAME="createdby_fk" TYPE="foreign" FIELDS="createdby" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_status" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- ============================================================
+         TABLE: local_aurahr_applications
+         Tracks every candidate's application to a job, including
+         pipeline stage and scores from each round.
+         ============================================================ -->
+    <TABLE NAME="local_aurahr_applications" COMMENT="Candidate applications and pipeline tracking">
+      <FIELDS>
+        <FIELD NAME="id"                TYPE="int"    LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid"            TYPE="int"    LENGTH="10" NOTNULL="true"
+               COMMENT="FK to mdl_user.id — the candidate"/>
+        <FIELD NAME="jobid"             TYPE="int"    LENGTH="10" NOTNULL="true"
+               COMMENT="FK to local_aurahr_jobs.id"/>
+        <FIELD NAME="stage"             TYPE="char"   LENGTH="30" NOTNULL="true" DEFAULT="applied"
+               COMMENT="applied | screened | academia | interview | offer | selected | rejected"/>
+        <FIELD NAME="jd_score"          TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="academia_score"    TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="interview_score"   TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="overall_score"     TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="malpractice"       TYPE="int"    LENGTH="1"  NOTNULL="true" DEFAULT="0"
+               COMMENT="Boolean: 1 = malpractice detected"/>
+        <FIELD NAME="recruiter_rating"  TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="recruiter_feedback" TYPE="text"  NOTNULL="false"/>
+        <FIELD NAME="ai_summary"        TYPE="text"   NOTNULL="false"/>
+        <FIELD NAME="age"               TYPE="int"    LENGTH="3" NOTNULL="false"/>
+        <FIELD NAME="gender"            TYPE="char"   LENGTH="20" NOTNULL="false"/>
+        <FIELD NAME="role"              TYPE="char"   LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="education_details" TYPE="text"   NOTNULL="false"/>
+        <FIELD NAME="resume_skills"     TYPE="text"   NOTNULL="false"/>
+        <FIELD NAME="github_score"      TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="leetcode_score"    TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="linkedin_score"    TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="false"/>
+        <FIELD NAME="matched_skills"    TYPE="text"   NOTNULL="false"/>
+        <FIELD NAME="timecreated"       TYPE="int"    LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified"      TYPE="int"    LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"    TYPE="primary"  FIELDS="id"/>
+        <KEY NAME="userid_fk"  TYPE="foreign"  FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="jobid_fk"   TYPE="foreign"  FIELDS="jobid"  REFTABLE="local_aurahr_jobs" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_jobid"  UNIQUE="false" FIELDS="jobid"/>
+        <INDEX NAME="ix_userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="ix_stage"  UNIQUE="false" FIELDS="stage"/>
+        <INDEX NAME="ix_job_user" UNIQUE="true" FIELDS="jobid, userid"
+               COMMENT="Prevent duplicate applications"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- ============================================================
+         TABLE: local_aurahr_jd_analysis
+         Stores the AI-parsed JD analysis (4-box breakdown) for each
+         job posting. JSON arrays stored as TEXT fields.
+         ============================================================ -->
+    <TABLE NAME="local_aurahr_jd_analysis" COMMENT="AI-parsed JD analysis results">
+      <FIELDS>
+        <FIELD NAME="id"           TYPE="int"  LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="jobid"        TYPE="int"  LENGTH="10" NOTNULL="true"
+               COMMENT="FK to local_aurahr_jobs.id"/>
+        <FIELD NAME="must_have"    TYPE="text" NOTNULL="false" COMMENT="JSON array of must-have skills"/>
+        <FIELD NAME="good_to_have" TYPE="text" NOTNULL="false" COMMENT="JSON array of good-to-have skills"/>
+        <FIELD NAME="future_proof" TYPE="text" NOTNULL="false" COMMENT="JSON array of future-proof skills"/>
+        <FIELD NAME="team_gap"     TYPE="text" NOTNULL="false" COMMENT="JSON array of team gap skills"/>
+        <FIELD NAME="pass_count"   TYPE="int"  LENGTH="10" NOTNULL="true" DEFAULT="10"
+               COMMENT="Number of candidates to pass to next round"/>
+        <FIELD NAME="timecreated"  TYPE="int"  LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary"   TYPE="primary" FIELDS="id"/>
+        <KEY NAME="jobid_fk"  TYPE="foreign" FIELDS="jobid" REFTABLE="local_aurahr_jobs" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_jobid" UNIQUE="false" FIELDS="jobid"/>
+      </INDEXES>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>

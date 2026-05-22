@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getStructuredAIResponse } from '@/lib/neev';
-import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
     const { jdText, department } = await req.json();
 
-    // 1. Get Existing Team Skills for Gap Analysis
-    const teamMembers = await prisma.employee.findMany({
-      where: { department: department || undefined },
-      select: { skills: true, role: true }
-    });
+    // 1. Mock Existing Team Skills for Gap Analysis
+    const teamMembers = [
+      { role: 'Developer', skills: ['React', 'Node.js'] }
+    ];
 
     const teamContext = JSON.stringify(teamMembers);
 
@@ -42,19 +40,8 @@ export async function POST(req: Request) {
 
     if (!analysis) throw new Error("JD Analysis failed.");
 
-    // 3. Save JD to DB for later matching
-    const savedJD = await prisma.jobDescription.create({
-      data: {
-        role: analysis.role,
-        description: jdText,
-        mustHave: analysis.mustHave,
-        goodToHave: analysis.goodToHave,
-        futureProof: analysis.futureProof,
-        teamGap: analysis.teamGap
-      }
-    });
-
-    return NextResponse.json({ ...analysis, id: savedJD.id });
+    // 3. Mock Save JD to DB
+    return NextResponse.json({ ...analysis, id: Math.floor(Math.random() * 1000) });
 
   } catch (error: any) {
     console.error("JD Parser Error:", error);

@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDb, saveDb } from '@/lib/db';
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const body = await req.json();
     const db = await getDb();
-    const index = db.candidates.findIndex(c => c.id === params.id);
+    const index = db.candidates.findIndex((c: any) => c.id === id);
     
     if (index === -1) return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
 

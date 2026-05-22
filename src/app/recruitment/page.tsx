@@ -77,7 +77,7 @@ export default function RecruitmentPage() {
                 { step: '3', title: 'Interview Scheduling', icon: Calendar, desc: "Candidates self-schedule from your team's live calendar. Zero back-and-forth." },
                 { step: '4', title: 'AI Interview & Assessment', icon: Video, desc: 'AI conducts async video interviews and evaluates responses in real time.' },
                 { step: '5', title: 'Scoring & Ranking', icon: BarChart2, desc: 'Every candidate gets a detailed score card — skills, culture fit, communication.' },
-                { step: '6', title: 'Recruiter Dashboard', icon: LayoutDashboard, desc: 'One unified view of your entire pipeline. Filter, compare, and make offers fast.' }
+                { step: '6', title: 'Recruiter Dashboard', icon: LayoutDashboard, desc: 'One unified view of your entire recruitment process. Filter, compare, and make offers fast.' }
               ].map((s, i) => (
                 <div key={i} className="relative bg-[#EDE8DF] border border-[#D8D2C8] rounded-xl p-6 flex flex-col items-start border-t-4 border-t-[#B8972E] shadow-sm hover:-translate-y-1 transition-transform">
                   <div className="bg-[#F5F1EB] border border-[#D8D2C8] w-12 h-12 rounded-full flex items-center justify-center relative z-10 mb-6 mx-auto md:mx-0 shadow-sm">
@@ -250,7 +250,7 @@ export default function RecruitmentPage() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
               <span className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-[#B8972E]">Dashboard</span>
-              <h3 className="text-3xl text-[#1A1814]" style={{ fontFamily: 'Georgia, serif' }}>Complete pipeline control.</h3>
+              <h3 className="text-3xl text-[#1A1814]" style={{ fontFamily: 'Georgia, serif' }}>Complete recruitment control.</h3>
               <ul className="space-y-3 text-[#3D3A34]">
                 <li className="flex items-start"><CheckCircle className="w-5 h-5 text-[#C8A84B] mr-3 shrink-0" /> Drag-and-drop Kanban candidate workflow.</li>
                 <li className="flex items-start"><CheckCircle className="w-5 h-5 text-[#C8A84B] mr-3 shrink-0" /> One-click offer letter generation.</li>

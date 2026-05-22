@@ -1,0 +1,200 @@
+AuraHR
+Common Pages:
+•
+Overview
+•
+Signup+Login
+Organization Side:
+(back button (enabled when pages are stacked), slidebar icon, overview as launching page, notification icon, profile icon)
+Slidebar – Overview, All Applications, Current Vacancies, Smart Scheduler, Help, Settings
+•
+Overview: with hyperlinks of everything
+✓
+Current vacancies widget (list all), with shortcuts to their respective pages
+✓
+Finished processes (last 3) with shortcuts to their respective result pages
+✓
+Critical tech Gaps in team right now
+✓
+AI Scheduler
+✓
+Statistics:
+▪
+1 widget for every open vacancy – hiring status
+•
+Applications:
+✓
+Create new vacancy – Job Title, Description, Approx. no. of vacancies, Application deadline, Max limit, CREATE button
+✓
+All Applications (vacancy title, date created, status, date finished, view button) – as a rectangular box for each application + search bar
+•
+Current Vacancies:
+A side panel with all currently open job titles as buttons, with page as: (latest posting opens by default)
+✓
+Job Title
+✓
+Top Navigation panel:
+▪
+JD Parser – Must have skills, Good- to have skills, Future Proof skills, Team Gap skills, No. of applicants to be passed textbox, Percentage match vs no. of candidates graph, PARSE CONFIRM button
+▪
+Academia round – No. of candidates to pass, No. of questions, Paper Description (default auto generated), Generate Paper button, Generated Questions box, Schedule test button (for notifying everyone with start and end date and time), START TEST button, No. of applicants finished, END TEST button
+▪
+Interview Panel –
+o
+Questions drafted by Interviewer (textbox)
+o
+All scheduled interviews sorted based on time (each applicant in 1 box with name, scheduled date and time, Start Now button (Clicking on a row opens the respective candidate details pop up)
+o
+A table with Candidate s. no., name, Interview score, Overall score, Malpractice, Interview details ‘view’ button, Selected, SELECT button (enabled if rejected/not decided), REJECT button (enabled if selected/not decided)
+o
+FINALISE button
+▪
+Results - no. of applicants applied, no. of applicants qualified for academia round, no. of applicants qualified for interview round, Interviews pending, no. Selected, END Application button with a confirmation dialogue box
+✓
+Ranked table (from application details page) + sort by and filter options + search bar (Clicking on a row opens the respective candidate details pop up)
+•
+Smart Scheduler:
+When going to schedule an interview: Availability Management page for every interviewer, stacked on previous page when scheduling hyperlink is clicked,
+✓
+Set My Availability to define recurring weekly time slots and set one-off availability blocks,
+✓
+Block Time Off to mark periods when unavailable for vacation, meetings, or dedicated focus time,
+✓
+View Interview Calendar with daily, weekly, or monthly views to see all scheduled interviews,
+✓
+Review Pending Requests: It show candidates waiting for interview slot confirmations with options to approve, reject, or suggest alternative times,
+✓
+Auto-Schedule: Rules to configure maximum number of interviews per day, buffer time between interviews, and preferred time windows,
+•
+When need to reject/postpone time:
+✓
+Reschedule / Cancel to move or cancel existing interviews with automatic notifications sent to candidates,
+✓
+Override Slot to force bookings outside normal scheduling rules for VIP or priority candidates.
+•
+Application Details page for every application, stacked on previous page when hyperlink is clicked:
+✓
+Job Title, Description (edit option), Date created, Status, Date Finished, no. of applicants applied, no. of applicants qualified for academia round, no. of applicants qualified for interview round, Interviews pending, no. Selected
+✓
+A ranked table with (s. no., Name, applicant id, Date applied, JD Parser score, Academia round score, Interview score, Stage, Malpractice, Overall Score) + sort by and filter options + search bar (Clicking on a row opens the respective candidate details pop up)
+•
+Pop up – Candidate details: Name, age, photo, gender, phone number, Role, ‘Actions’ dropdown button (Move to ‘x’ stage), education details, skills from resume with score, skills from GitHub with score, skills from leetcode with score, linkedin score, matched skills, JD Parser score, Academia Round score, Interview score, Malpractice, Stage, Overall score, polygonal graphical representation
+•
+Interview Page:
+✓
+A room using jitsi, Live transcription below, a Side Panel with Drafted questions box and notes box, Alert box if malpractice found.
+✓
+Pop up after interview finishes: AI report with suggested score, Proctoring report, notes written during interview, Remarks textbox, Score textbox (out of 100), SELECT/REJECT/HOLD(not decided) buttons.
+•
+Pop up - Interview Detail Page: Applicant’s name, Whole conversation in text, AI plagiarism test report, AI detection in answers, Proctoring and malpractice report, AI Feedback, Feedback by Interviewer, Score by AI, Score by Interviewer
+Candidate Side:
+(back button (enabled when pages are stacked), slidebar icon, Profile page as launching page when first time signup done, dashboard as general launching page, notification icon, profile icon)
+Slidebar – Dashboard, Open Posts, My Applications, Smart Scheduler, Help, Settings
+•
+Profile Setup:
+✓
+Name, DOB, Gender, Photo upload, Educational Details, Techniical Skills, Non-Technical skills, Resume PDF (use AWS OCR), github link, linkedin link, other details (textbox/toggle/calender)
+✓
+Update button
+•
+Dashboard:
+✓
+Current Applications widget (list all), with shortcuts to their respective pages
+✓
+Finished processes (last 3) with shortcuts to their respective result pages
+✓
+Tests scheduled widget (START TEST button enabled for tests live now, navigates to Test page)
+✓
+Interviews scheduled widget (JOIN NOW button enabled for interviews live now, navigates to Interviews page)
+•
+Open Posts:
+✓
+new vacancy: sort by, filter options, search bar
+▪
+Organisation name, Job Title, Description, Approx. no. of vacancies, Application deadline
+▪
+Apply Button (turns to ‘Applied’ when clicked after a confirmation dialogue box)
+•
+My applications:
+A side panel with all jobs applied for (current, and past), opens latest one by default
+✓
+Job Title
+✓
+Top Navigation panel:
+▪
+JD Parser – Must have skills, Good- to have skills, Future Proof skills, Team Gap skills, Percentage match, Result
+▪
+Academia round – Check if qualified (if not, page only says not qualified)
+o
+Test scheduled on, at
+o
+START TEST button (enabled when test is live) – navigates to test page
+o
+Score
+o
+Result
+▪
+Interview Panel – Check if qualified (if not, page only says not qualified)
+o
+Interview Scheduled on, at
+o
+JOIN NOW button (enabled when interviewer joins) – navigates to interview page
+o
+Score
+o
+Result
+▪
+Result – Selected or not
+•
+Smart Scheduler: (schedules all interviews automatically)
+Top navigation bar – My Interviews, My Free Time
+✓
+Interviews scheduled list:
+▪
+schedules now (with join button), all upcoming, past
+▪
+Request for prepone/postpone for every interview
+✓
+Set Free time:
+▪
+A widget of next 7 days of the week with
+o
+Date, Day
+o
+Add available time slot button to add time slots when free - with a pop up
+▪
+Update button (navigates to My Interviews page)
+•
+Test Page: (stacked over previous page)
+✓
+Full screen
+✓
+Video proctoring
+✓
+Audio proctoring
+✓
+Check availability of other devices nearby
+✓
+Test rules
+✓
+Alerts on violations
+✓
+A question with textbox for answer in box widget for every question
+✓
+SUBMIT Button – goes to previous page
+•
+Interview Page: (stacked over previous page)
+✓
+Full screen
+✓
+Video proctoring
+✓
+Audio proctoring
+✓
+Check availability of other devices nearby
+✓
+Alerts on violations
+✓
+Jitsi room
+✓
+After it finishes, goes to previous page

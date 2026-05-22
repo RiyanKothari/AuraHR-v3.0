@@ -10,7 +10,12 @@
       "state": "Maharashtra",
       "taxRegime": "new",
       "pan": "ABCPS1234A",
-      "uan": "100208765432"
+      "uan": "100208765432",
+      "skills": [
+        "React",
+        "Node.js",
+        "TypeScript"
+      ]
     },
     {
       "id": "2",
@@ -22,7 +27,12 @@
       "state": "Karnataka",
       "taxRegime": "new",
       "pan": "AABPV4321B",
-      "uan": "100298765001"
+      "uan": "100298765001",
+      "skills": [
+        "Product Management",
+        "Agile",
+        "Jira"
+      ]
     },
     {
       "id": "3",
@@ -34,7 +44,12 @@
       "state": "Maharashtra",
       "taxRegime": "old",
       "pan": "AAAPD5678C",
-      "uan": "100312345009"
+      "uan": "100312345009",
+      "skills": [
+        "Recruitment",
+        "Employee Relations",
+        "HRIS"
+      ]
     },
     {
       "id": "4",
@@ -46,7 +61,12 @@
       "state": "Maharashtra",
       "taxRegime": "new",
       "pan": "ABCDK8765D",
-      "uan": "100412345678"
+      "uan": "100412345678",
+      "skills": [
+        "Python",
+        "Django",
+        "PostgreSQL"
+      ]
     },
     {
       "id": "5",
@@ -58,7 +78,12 @@
       "state": "Karnataka",
       "taxRegime": "new",
       "pan": "AADSV9012E",
-      "uan": "100512349876"
+      "uan": "100512349876",
+      "skills": [
+        "Verilog",
+        "SystemVerilog",
+        "C++"
+      ]
     },
     {
       "id": "6",
@@ -70,7 +95,12 @@
       "state": "Tamil Nadu",
       "taxRegime": "old",
       "pan": "AAFMI6543F",
-      "uan": "100612348765"
+      "uan": "100612348765",
+      "skills": [
+        "React",
+        "Node.js",
+        "TypeScript"
+      ]
     },
     {
       "id": "7",
@@ -82,7 +112,12 @@
       "state": "Maharashtra",
       "taxRegime": "new",
       "pan": "AAGKS2109G",
-      "uan": "100712347654"
+      "uan": "100712347654",
+      "skills": [
+        "Product Management",
+        "Agile",
+        "Jira"
+      ]
     },
     {
       "id": "8",
@@ -94,7 +129,12 @@
       "state": "Maharashtra",
       "taxRegime": "old",
       "pan": "AAHGT7654H",
-      "uan": "100812346543"
+      "uan": "100812346543",
+      "skills": [
+        "Recruitment",
+        "Employee Relations",
+        "HRIS"
+      ]
     },
     {
       "id": "9",
@@ -106,7 +146,12 @@
       "state": "Maharashtra",
       "taxRegime": "new",
       "pan": "AAIAD3210I",
-      "uan": "100912345432"
+      "uan": "100912345432",
+      "skills": [
+        "Python",
+        "Django",
+        "PostgreSQL"
+      ]
     }
   ],
   "activities": [
@@ -974,7 +1019,7 @@
       "department": "Engineering",
       "salaryBudget": 2800000,
       "active": true,
-      "createdAt": "2026-05-20T17:30:33.358Z",
+      "createdAt": "2026-05-21T13:55:00.019Z",
       "mustHave": [
         "React",
         "Node.js",
@@ -995,7 +1040,7 @@
       "department": "AI Research",
       "salaryBudget": 3200000,
       "active": true,
-      "createdAt": "2026-05-20T17:30:33.358Z",
+      "createdAt": "2026-05-21T13:55:00.019Z",
       "mustHave": [
         "Python",
         "Machine Learning",

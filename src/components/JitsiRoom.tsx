@@ -25,7 +25,7 @@ export default function JitsiRoom({ roomName, candidateName, onEvent }: JitsiRoo
         parentNode: containerRef.current,
         width: '100%',
         height: '100%',
-        userInfo: { displayName: candidateName },
+        userInfo: { displayName: candidateName, email: "room@aurahr.local" },
         configOverwrite: {
           startWithAudioMuted: true,
           disableDeepLinking: true,

@@ -35,8 +35,8 @@ export default function LandingPage() {
             Global HR, automated with <span className="italic text-gold">precision</span>.
           </h1>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href="/dashboard/verification" className="bg-ink text-cream hover:opacity-90 px-8 py-3.5 rounded-full font-medium transition-all w-full sm:w-auto flex items-center justify-center">
-              Enter Dashboard <ArrowRight className="ml-2 w-4 h-4" />
+            <Link href="/org" className="bg-ink text-cream hover:opacity-90 px-8 py-3.5 rounded-full font-medium transition-all w-full sm:w-auto flex items-center justify-center">
+              Enter Platform <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
             <Link href="#features" className="bg-transparent border border-ink text-ink hover:bg-ink/5 px-8 py-3.5 rounded-full font-medium transition-all w-full sm:w-auto">
               See Demo
