@@ -132,6 +132,14 @@ function getFallbackMockData<T>(prompt: string, systemPrompt: string): T {
           institution: "University of Technology",
           year: "2022"
         }
+      ],
+      // Required for the Candidate Portal Resume feature
+      brief: "A highly skilled Software Engineer with extensive experience developing full-stack web applications. Demonstrates strong proficiency in modern frameworks and databases.",
+      ranking: 88,
+      notablePoints: [
+        "Strong proficiency in React and Node.js.",
+        "Proven ability to lead agile development cycles.",
+        "Excellent technical communication and mentoring skills."
       ]
     } as unknown as T;
   }
