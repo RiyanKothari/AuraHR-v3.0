@@ -239,7 +239,7 @@ async function handleSignup(body: {
     const fs = require('fs');
     const path = require('path');
     const dbPath = path.join(process.cwd(), 'public', 'dev-db.json');
-    let devDb = { users: [] };
+    let devDb: { users: any[] } = { users: [] };
     
     if (fs.existsSync(dbPath)) {
       devDb = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
