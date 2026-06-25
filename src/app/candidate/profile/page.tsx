@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   User, Mail, Phone, MapPin, Briefcase, Upload,
@@ -29,6 +29,8 @@ export default function CandidateProfilePage() {
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadProfile() {
@@ -85,6 +87,45 @@ export default function CandidateProfilePage() {
       alert('Failed to save profile.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('resume', file);
+    formData.append('userid', user.id.toString());
+
+    try {
+      const res = await fetch('/api/resume/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+
+      // Autofill the form with the extracted data
+      setForm(prev => ({
+        ...prev,
+        phone: result.data.phone || prev.phone,
+        city: result.data.city || prev.city,
+        education: result.data.education || prev.education,
+        tech_skills: result.data.tech_skills || prev.tech_skills,
+        nontech_skills: result.data.nontech_skills || prev.nontech_skills,
+        bio: result.data.bio || prev.bio,
+        github: result.data.github || prev.github,
+        leetcode: result.data.leetcode || prev.leetcode,
+      }));
+      alert('Resume parsed! Form has been autofilled. Review and click Save Changes.');
+    } catch (err: any) {
+      alert(err.message || 'Failed to process resume');
+    } finally {
+      setUploading(false);
+      // reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   }
 
@@ -257,13 +298,31 @@ export default function CandidateProfilePage() {
           <Briefcase size={18} className="text-blue-500" />
           Resume
         </h3>
-        <div className="border-2 border-dashed border-ink/10 rounded-2xl p-8 text-center hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group">
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileUpload}
+        />
+        <div 
+          onClick={() => !uploading && fileInputRef.current?.click()}
+          className={`border-2 border-dashed border-ink/10 rounded-2xl p-8 text-center hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
+        >
           <div className="absolute inset-0 bg-blue-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-          <Upload size={32} className="text-ink/20 mx-auto mb-3 group-hover:text-blue-500 transition-colors relative z-10" />
+          
+          {uploading ? (
+            <Loader2 size={32} className="text-blue-500 mx-auto mb-3 animate-spin relative z-10" />
+          ) : (
+            <Upload size={32} className="text-ink/20 mx-auto mb-3 group-hover:text-blue-500 transition-colors relative z-10" />
+          )}
+          
           <p className="text-sm text-ink/40 relative z-10">
-            Drag & drop your resume here, or <span className="text-blue-500 font-medium">browse files</span>
+            {uploading ? 'Extracting details using AI...' : (
+              <>Drag & drop your resume here, or <span className="text-blue-500 font-medium">browse files</span></>
+            )}
           </p>
-          <p className="text-xs text-ink/25 mt-1 relative z-10">PDF, DOC, DOCX (max 5MB)</p>
+          {!uploading && <p className="text-xs text-ink/25 mt-1 relative z-10">PDF, DOC, DOCX (max 5MB)</p>}
           <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider relative z-10">
             <CheckCircle size={12} /> AWS AI OCR Active
           </div>

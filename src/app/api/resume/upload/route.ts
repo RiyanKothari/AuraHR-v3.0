@@ -8,6 +8,14 @@ interface AIResumeAnalysis {
   brief: string;
   ranking: number;
   notablePoints: string[];
+  phone?: string;
+  city?: string;
+  education?: string;
+  tech_skills?: string;
+  nontech_skills?: string;
+  bio?: string;
+  github?: string;
+  leetcode?: string;
 }
 
 export async function POST(request: Request) {
@@ -66,7 +74,15 @@ Required JSON Structure:
     "Over 5 years of experience in React and Node.js",
     "Led a team of 4 engineers",
     "Graduated with honors in Computer Science"
-  ]
+  ],
+  "phone": "Extracted phone number or empty string",
+  "city": "Extracted city/location or empty string",
+  "education": "Brief educational details (e.g., B.Tech Computer Science, IIT Bombay 2024)",
+  "tech_skills": "Comma separated list of technical skills (e.g. React, Node.js, Python)",
+  "nontech_skills": "Comma separated list of soft skills (e.g. Leadership, Agile)",
+  "bio": "A professional 3-4 sentence bio written from the candidate's perspective to recruiters.",
+  "github": "Extracted GitHub URL or empty string",
+  "leetcode": "Extracted LeetCode URL or empty string"
 }
 
 Resume Text:
@@ -109,6 +125,14 @@ ${resumeText.substring(0, 8000)}
       brief: parsedData.brief,
       ranking: parsedData.ranking,
       notablePoints: parsedData.notablePoints,
+      phone: parsedData.phone || '',
+      city: parsedData.city || '',
+      education: parsedData.education || '',
+      tech_skills: parsedData.tech_skills || '',
+      nontech_skills: parsedData.nontech_skills || '',
+      bio: parsedData.bio || '',
+      github: parsedData.github || '',
+      leetcode: parsedData.leetcode || '',
       createdAt: new Date().toISOString()
     };
     

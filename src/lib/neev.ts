@@ -140,7 +140,16 @@ function getFallbackMockData<T>(prompt: string, systemPrompt: string): T {
         "Strong proficiency in React and Node.js.",
         "Proven ability to lead agile development cycles.",
         "Excellent technical communication and mentoring skills."
-      ]
+      ],
+      // Required for Resume Profile Autofill
+      phone: "+91 9876543210",
+      city: "Mumbai",
+      education: "Bachelor of Science in Computer Science, University of Technology (2022)",
+      tech_skills: "JavaScript, TypeScript, React, Node.js, SQL, Git",
+      nontech_skills: "Agile methodology, Mentoring, Technical Writing",
+      bio: "I am a skilled Software Engineer with extensive experience developing full-stack web applications. I excel at building responsive user interfaces using React and integrating robust RESTful APIs.",
+      github: "https://github.com/mock-candidate",
+      leetcode: "https://leetcode.com/u/mock-candidate"
     } as unknown as T;
   }
 
