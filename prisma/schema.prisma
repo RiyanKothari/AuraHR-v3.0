@@ -92,3 +92,20 @@ model MarketTrend {
   growth    Float    // Percentage
   updatedAt DateTime @updatedAt
 }
+
+model Assessment {
+  id          String     @id @default(cuid())
+  jobId       String
+  title       String
+  questions   Question[]
+  createdAt   DateTime   @default(now())
+}
+
+model Question {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  text         String
+  options      String[]   // Array of strings
+  correctAnswer String
+}

@@ -4,20 +4,16 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  Camera, EyeOff, AlertTriangle, CheckCircle, Clock, ShieldAlert, Play, Check
+  Camera, EyeOff, AlertTriangle, CheckCircle, Clock, ShieldAlert, Play, Check, Loader2
 } from 'lucide-react';
 
 interface Question {
   id: string;
-  text: string;
-  options: string[];
+  type: 'mcq' | 'text';
+  question: string;
+  options?: string[];
+  correctAnswer?: string;
 }
-
-const mockQuestions: Question[] = [
-  { id: '1', text: 'What is the primary purpose of React.js?', options: ['Server-side processing', 'Database Management', 'Building User Interfaces', 'Network Routing'] },
-  { id: '2', text: 'Which of the following is a hook in React?', options: ['useEffect', 'useNetwork', 'useDatabase', 'useServer'] },
-  { id: '3', text: 'In Next.js, what does the App Router use by default?', options: ['Client Components', 'Server Components', 'Service Workers', 'WebSockets'] },
-];
 
 export default function ExamPage() {
   const params = useParams();
@@ -26,11 +22,15 @@ export default function ExamPage() {
 
   const [hasCamera, setHasCamera] = useState(false);
   const [examStarted, setExamStarted] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [generating, setGenerating] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 mins
   const [violations, setViolations] = useState<string[]>([]);
   const [finished, setFinished] = useState(false);
+  const [finalScore, setFinalScore] = useState<number | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -67,11 +67,6 @@ export default function ExamPage() {
       if (document.hidden) {
         const violation = `Tab switched or minimized at ${new Date().toLocaleTimeString()}`;
         setViolations(prev => [...prev, violation]);
-        // Ideally: send this violation to the backend immediately via API
-        fetch('/api/exam/log-violation', {
-          method: 'POST',
-          body: JSON.stringify({ sessionId, type: 'TAB_SWITCH', timestamp: Date.now() })
-        }).catch(console.error);
       }
     };
 
@@ -81,37 +76,99 @@ export default function ExamPage() {
 
   // 3. Timer
   useEffect(() => {
-    if (!examStarted || finished) return;
+    if (!examStarted || finished || questions.length === 0) return;
     const interval = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
-          setFinished(true);
+          submitExam();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [examStarted, finished]);
+  }, [examStarted, finished, questions.length]);
 
-  const handleStart = () => {
-    if (hasCamera) {
-      setExamStarted(true);
-    } else {
+  const handleStart = async () => {
+    if (!hasCamera) {
       alert("You must grant camera access to start the proctored exam.");
+      return;
+    }
+    setExamStarted(true);
+    setGenerating(true);
+    
+    try {
+      const res = await fetch('/api/academia/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'Software Engineer', skills: 'JavaScript, React, System Design' })
+      });
+      const data = await res.json();
+      if (data.success && data.questions) {
+        setQuestions(data.questions);
+      } else {
+        alert('Failed to load assessment questions.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error fetching questions.');
+    } finally {
+      setGenerating(false);
     }
   };
 
   const handleSelect = (option: string) => {
-    setAnswers({ ...answers, [mockQuestions[currentQ].id]: option });
+    if (questions[currentQ]) {
+      setAnswers({ ...answers, [questions[currentQ].id]: option });
+    }
+  };
+
+  const handleTextAnswer = (text: string) => {
+    if (questions[currentQ]) {
+      setAnswers({ ...answers, [questions[currentQ].id]: text });
+    }
   };
 
   const handleNext = () => {
-    if (currentQ < mockQuestions.length - 1) {
+    if (currentQ < questions.length - 1) {
       setCurrentQ(prev => prev + 1);
     } else {
-      setFinished(true);
-      // In production: submit answers to backend
+      submitExam();
+    }
+  };
+
+  const submitExam = async () => {
+    setFinished(true);
+    setSubmitting(true);
+    
+    // Format answers array for the evaluate route
+    const formattedAnswers = questions.map(q => ({
+      questionId: q.id,
+      candidateAnswer: answers[q.id] || 'No answer provided'
+    }));
+
+    // Add correct indices for the evaluate API
+    const formattedQuestions = questions.map(q => {
+      if (q.type === 'mcq' && q.options && q.correctAnswer) {
+        return { ...q, correct: q.options.indexOf(q.correctAnswer) };
+      }
+      return q;
+    });
+
+    try {
+      const res = await fetch('/api/academia/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questions: formattedQuestions, answers: formattedAnswers })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFinalScore(data.score);
+      }
+    } catch (err) {
+      console.error('Failed to submit exam:', err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -128,6 +185,19 @@ export default function ExamPage() {
           <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h1 className="text-2xl font-serif font-bold text-ink mb-2">Exam Completed</h1>
           <p className="text-ink/60 mb-6">Your responses and proctoring logs have been securely submitted.</p>
+          
+          {submitting ? (
+             <div className="flex flex-col items-center mb-6">
+               <Loader2 className="w-6 h-6 text-blue-500 animate-spin mb-2" />
+               <span className="text-sm text-ink/50">Evaluating your answers using AI...</span>
+             </div>
+          ) : (
+            <div className="mb-6 p-4 bg-ink/5 rounded-xl">
+              <p className="text-sm text-ink/50 font-bold uppercase tracking-wide">Final Score</p>
+              <p className="text-3xl font-serif font-bold text-ink">{finalScore !== null ? `${finalScore}%` : 'N/A'}</p>
+            </div>
+          )}
+
           <button 
             onClick={() => router.push('/candidate')}
             className="w-full py-3 bg-ink text-white rounded-xl font-bold hover:bg-ink/80 transition-colors"
@@ -173,10 +243,15 @@ export default function ExamPage() {
               <Play size={18} /> Start Exam
             </button>
           </div>
-        ) : (
+        ) : generating ? (
+           <div className="flex-1 flex flex-col items-center justify-center">
+             <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+             <p className="text-ink/60">Generating personalized assessment questions...</p>
+           </div>
+        ) : questions.length > 0 ? (
           <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-serif font-bold text-ink">Question {currentQ + 1} of {mockQuestions.length}</h2>
+              <h2 className="text-xl font-serif font-bold text-ink">Question {currentQ + 1} of {questions.length}</h2>
               <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-ink/10 shadow-sm font-mono font-bold">
                 <Clock size={16} className="text-blue-500" />
                 {formatTime(timeLeft)}
@@ -184,38 +259,48 @@ export default function ExamPage() {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-ink/5 mb-8 flex-1">
-              <p className="text-lg font-medium text-ink mb-8">{mockQuestions[currentQ].text}</p>
-              <div className="space-y-3">
-                {mockQuestions[currentQ].options.map((opt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSelect(opt)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-                      answers[mockQuestions[currentQ].id] === opt 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-ink/10 hover:border-ink/30 hover:bg-ink/5'
-                    }`}
-                  >
-                    <span className={answers[mockQuestions[currentQ].id] === opt ? 'font-bold text-blue-700' : 'text-ink/80'}>{opt}</span>
-                    {answers[mockQuestions[currentQ].id] === opt && <CheckCircle size={20} className="text-blue-500" />}
-                  </button>
-                ))}
-              </div>
+              <p className="text-lg font-medium text-ink mb-8">{questions[currentQ].question}</p>
+              
+              {questions[currentQ].type === 'mcq' && questions[currentQ].options ? (
+                <div className="space-y-3">
+                  {questions[currentQ].options.map((opt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSelect(opt)}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                        answers[questions[currentQ].id] === opt 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-ink/10 hover:border-ink/30 hover:bg-ink/5'
+                      }`}
+                    >
+                      <span className={answers[questions[currentQ].id] === opt ? 'font-bold text-blue-700' : 'text-ink/80'}>{opt}</span>
+                      {answers[questions[currentQ].id] === opt && <CheckCircle size={20} className="text-blue-500" />}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <textarea 
+                  className="w-full h-40 p-4 border-2 border-ink/10 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all resize-none"
+                  placeholder="Type your answer here..."
+                  value={answers[questions[currentQ].id] || ''}
+                  onChange={(e) => handleTextAnswer(e.target.value)}
+                />
+              )}
             </div>
 
             <div className="flex justify-end">
               <button
                 onClick={handleNext}
-                disabled={!answers[mockQuestions[currentQ].id]}
+                disabled={!answers[questions[currentQ].id]}
                 className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white transition-all ${
-                  answers[mockQuestions[currentQ].id] ? 'bg-ink hover:bg-ink/80 shadow-md' : 'bg-ink/20 cursor-not-allowed'
+                  answers[questions[currentQ].id] ? 'bg-ink hover:bg-ink/80 shadow-md' : 'bg-ink/20 cursor-not-allowed'
                 }`}
               >
-                {currentQ < mockQuestions.length - 1 ? 'Next Question' : 'Submit Exam'} <Check size={18} />
+                {currentQ < questions.length - 1 ? 'Next Question' : 'Submit Exam'} <Check size={18} />
               </button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* RIGHT: Proctoring Sidebar */}
