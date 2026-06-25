@@ -36,8 +36,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${manrope.variable} ${dmMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="font-sans min-h-full flex flex-col">
+      <body className="font-sans min-h-full flex flex-col" suppressHydrationWarning>
         <AuthProvider>
           {children}
         </AuthProvider>
