@@ -1,0 +1,38 @@
+version: '2'
+services:
+  mariadb:
+    image: 'mariadb:10.6'
+    environment:
+      - MYSQL_ROOT_PASSWORD=moodle_root
+      - MYSQL_USER=bn_moodle
+      - MYSQL_PASSWORD=moodle_password
+      - MYSQL_DATABASE=bitnami_moodle
+    volumes: []
+  moodle:
+    image: 'bitnamilegacy/moodle:latest'
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    environment:
+      - MOODLE_DATABASE_HOST=mariadb
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=bn_moodle
+      - MOODLE_DATABASE_PASSWORD=moodle_password
+      - MOODLE_DATABASE_NAME=bitnami_moodle
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=password
+      - MOODLE_EMAIL=admin@example.com
+    volumes: []
+      # - ./moodle-plugins/local/aurahr_jobs:/opt/bitnami/moodle/local/aurahr_jobs
+      # - ./moodle-plugins/local/aurahr_academia:/opt/bitnami/moodle/local/aurahr_academia
+      # - ./moodle-plugins/local/aurahr_interview:/opt/bitnami/moodle/local/aurahr_interview
+      # - ./moodle-plugins/local/aurahr_jdparser:/opt/bitnami/moodle/local/aurahr_jdparser
+      # - ./moodle-plugins/local/aurahr_scheduler:/opt/bitnami/moodle/local/aurahr_scheduler
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb_data:
+    driver: local
+  moodle_data:
+    driver: local
