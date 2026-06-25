@@ -476,6 +476,25 @@ function CandidateDetailPopup({
 }) {
   const [updating, setUpdating] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [resumeInsight, setResumeInsight] = useState<{ brief: string; ranking: number; notablePoints: string[] } | null>(null);
+  const [insightLoading, setInsightLoading] = useState(false);
+
+  useEffect(() => {
+    if (app?.userid) {
+      setInsightLoading(true);
+      fetch(`/api/applications/resume-insight?userid=${app.userid}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data) {
+            setResumeInsight(data.data);
+          } else {
+            setResumeInsight(null);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setInsightLoading(false));
+    }
+  }, [app?.userid]);
 
   async function moveStage(newStage: string) {
     if (!app) return;
@@ -611,6 +630,46 @@ function CandidateDetailPopup({
                 </a>
               )}
             </div>
+
+            {/* AI Resume Insight Box */}
+            {insightLoading ? (
+              <div className="flex items-center gap-2 text-ink/40 text-xs">
+                <Loader2 size={14} className="animate-spin" /> Fetching latest resume insights...
+              </div>
+            ) : resumeInsight ? (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1, boxShadow: ['0 0 0px rgba(99,102,241,0)', '0 0 20px rgba(99,102,241,0.3)', '0 0 0px rgba(99,102,241,0)'] }}
+                transition={{ duration: 0.5, boxShadow: { repeat: Infinity, duration: 3 } }}
+                className="relative p-5 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 overflow-hidden"
+              >
+                <div className="flex items-start justify-between mb-4 relative z-10">
+                  <h3 className="font-bold text-indigo-900 flex items-center gap-2">
+                    <Star size={18} className="text-indigo-600 fill-indigo-600" /> AI Resume Insight
+                  </h3>
+                  <div className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                    Score: {resumeInsight.ranking}/100
+                  </div>
+                </div>
+                
+                <div className="space-y-4 relative z-10">
+                  <p className="text-sm text-indigo-950/80 leading-relaxed bg-white/60 p-3.5 rounded-xl border border-white/50 shadow-sm font-medium">
+                    {resumeInsight.brief}
+                  </p>
+                  
+                  <div>
+                    <h4 className="text-[10px] font-bold text-indigo-900/60 uppercase tracking-wider mb-2">Notable Highlights</h4>
+                    <ul className="space-y-1.5 bg-white/30 p-3 rounded-xl">
+                      {resumeInsight.notablePoints.map((pt, i) => (
+                        <li key={i} className="text-xs text-indigo-950/90 flex items-start gap-2 font-medium">
+                          <span className="text-indigo-500 mt-0.5 font-bold">→</span> {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
 
             {/* Pipeline Status & Malpractice */}
             <div className="flex items-center justify-between p-4 bg-warm-sand/30 rounded-2xl border border-ink/5">

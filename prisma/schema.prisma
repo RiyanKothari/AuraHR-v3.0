@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Employee {
@@ -109,3 +108,14 @@ model Question {
   options      String[]   // Array of strings
   correctAnswer String
 }
+
+model ResumeAnalysis {
+  id            String   @id @default(cuid())
+  moodleUserId  Int      @unique
+  resumeUrl     String?
+  brief         String
+  ranking       Int
+  notablePoints String[]
+  createdAt     DateTime @default(now())
+}
+
