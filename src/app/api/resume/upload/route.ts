@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse');
 import { getStructuredAIResponse } from '@/lib/neev';
 import fs from 'fs';
 import path from 'path';
