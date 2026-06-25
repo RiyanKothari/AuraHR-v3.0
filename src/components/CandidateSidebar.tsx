@@ -11,12 +11,7 @@ import {
 
 const menuItems = [
   { href: '/candidate',              label: 'Dashboard',       icon: Home },
-  { href: '/candidate/posts',        label: 'Open Posts',       icon: Briefcase },
-  { href: '/candidate/applications', label: 'My Applications',  icon: FileText },
-  { href: '/candidate/scheduler',    label: 'Smart Scheduler',  icon: Calendar },
-  { href: '/candidate/profile',      label: 'Profile',          icon: User },
   { href: '/candidate/help',         label: 'Help',             icon: HelpCircle },
-  { href: '/candidate/settings',     label: 'Settings',         icon: Settings },
 ];
 
 export function CandidateSidebar() {
