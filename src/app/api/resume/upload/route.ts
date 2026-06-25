@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PDFParse } from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import { getStructuredAIResponse } from '@/lib/neev';
 import fs from 'fs';
 import path from 'path';
@@ -46,10 +46,8 @@ export async function POST(request: Request) {
     // Parse the PDF text
     let resumeText = '';
     try {
-      const parser = new PDFParse({ data: buffer });
-      const pdfData = await parser.getText();
+      const pdfData = await pdfParse(buffer);
       resumeText = pdfData.text;
-      await parser.destroy();
     } catch (err) {
       console.error('Failed to parse PDF text:', err);
       return NextResponse.json({ error: 'Failed to extract text from the provided PDF.' }, { status: 400 });
