@@ -475,7 +475,15 @@ function CandidateDetailPopup({
                         className="absolute right-0 mt-2 w-48 bg-white border border-ink/10 rounded-xl shadow-xl overflow-hidden z-10"
                       >
                         <div className="px-3 py-2 text-[10px] font-bold text-ink/40 uppercase tracking-wider bg-ink/5">Move to stage</div>
-                        {STAGES.filter(s => s !== app.stage).map(s => (
+                        {STAGES.filter(s => {
+                          if (s === app.stage) return false;
+                          if (s === 'rejected') return true;
+                          if (s === 'selected' || s === 'offer') return app.stage === 'interview';
+                          if (s === 'interview') return app.stage === 'academia';
+                          if (s === 'academia') return app.stage === 'screened';
+                          if (s === 'screened') return app.stage === 'applied';
+                          return false;
+                        }).map(s => (
                           <button
                             key={s}
                             onClick={() => moveStage(s)}
